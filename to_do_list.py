@@ -3,26 +3,7 @@ import tkinter
 import tkinter.messagebox
 import pickle
 
-root = tkinter.Tk()
-root.title("\t\tTo Do List")
 
-def del_task():
-    try:
-        task_index = listbox.curselection()[0]
-        listbox.delete(task_index)
-    except:
-        tkinter.messagebox.showwarning(title="Warning!",message="You must select a task")
-
-
-
-
-def load_task():
-    pass
-
-def save_task():
-    tasks = listbox.get(0, listbox.size())
-    print(tasks)
-    pickle.dump(tasks, open("tasks.dat","wb"))
 def add_task():
     task = edit.get()
 
@@ -33,36 +14,74 @@ def add_task():
         tkinter.messagebox.showwarning(title="Warning!",message="You must enter a task")
 
 
-frame = tkinter.Frame(root)
-frame.pack()
+def del_task():
+    try:
+        task_index = listbox.curselection()[0]
+        listbox.delete(task_index)
+    except:
+        tkinter.messagebox.showwarning(title="Warning!",message="You must select a task")
+
+def load_task():
+    try:
+
+        tasks = pickle.load(open("tasks.dat","rb"))
+        listbox.delete(0, tkinter.END)
+        for task in tasks:
+            listbox.insert(tkinter.END, task)
+    except:
+           tkinter.messagebox.showwarning(title="Warning!",message="File not found!!")
+
+def save_task():
+
+    if listbox.size() == 0:
+        tkinter.messagebox.showwarning(title="Warning!",message="No tasks found!")
+    else:
+
+        tasks = listbox.get(0, listbox.size())
+        pickle.dump(tasks, open("tasks.dat","wb"))
+        tkinter.messagebox.showinfo("Confirmation","Succesfully Saved")
+        listbox.delete(0, listbox.size())
 
 
-listbox = tkinter.Listbox(frame, height = 10, width = 50)
-listbox.pack(side=tkinter.LEFT)
+    # Main Function #
+if __name__=="__main__":
 
-scroll = tkinter.Scrollbar(frame)
-scroll.pack(side=tkinter.RIGHT, fill=tkinter.Y)
+    root = tkinter.Tk()
+    root.title("\t\tTo Do List")
 
-listbox.config(yscrollcommand=scroll.set)
-scroll.config(command=listbox.yview)
+    frame = tkinter.Frame(root)
+    frame.pack()
 
-edit = tkinter.Entry(root, width = 50)
-edit.pack()
+    listbox = tkinter.Listbox(frame, height = 10, width = 50)
+    listbox.pack(side=tkinter.LEFT)
 
-btn_add = tkinter.Button(root, text = "Add Tasks",width = 48, command = add_task)
-btn_add.pack()
+    scroll = tkinter.Scrollbar(frame)
+    scroll.pack(side=tkinter.RIGHT, fill=tkinter.Y)
 
-btn_delete = tkinter.Button(root, text = "Delete Tasks",width = 48, command = del_task)
-btn_delete.pack()
+    listbox.config(yscrollcommand=scroll.set)
+    scroll.config(command=listbox.yview)
 
-btn_load = tkinter.Button(root, text = "Load Tasks",width = 48, command = load_task)
-btn_load.pack()
+    edit = tkinter.Entry(root, width = 50)
+    edit.pack()
 
-btn_save = tkinter.Button(root, text = "Save Tasks",width = 48, command = save_task)
-btn_save.pack()
+    btn_add = tkinter.Button(root, text = "Add Tasks",width = 48, command = add_task)
+    btn_add.pack()
 
-root.mainloop()
-##
+    btn_delete = tkinter.Button(root, text = "Delete Tasks",width = 48, command = del_task)
+    btn_delete.pack()
+
+    btn_load = tkinter.Button(root, text = "Load Tasks",width = 48, command = load_task)
+    btn_load.pack()
+
+    btn_save = tkinter.Button(root, text = "Save Tasks",width = 48, command = save_task)
+    btn_save.pack()
+
+    root.mainloop()
+
+
+
+
+
 
 
 
